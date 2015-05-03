@@ -1,0 +1,22 @@
+{
+  "name": "CacheRequest",
+  "description": "Cache your requests on LocalStorage",
+  "version": "0.0.2",
+  "main":"dist/cacherequest.min.js",
+  "homepage": "https://github.com/renie/CacheRequest",
+  "license": "MPL-2.0",
+  "authors": [
+    "Renie Siqueira <renie.webdev@gmail.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src"
+  ]
+}
