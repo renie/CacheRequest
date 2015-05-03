@@ -3,14 +3,6 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		'concat': {
-			js: {
-				src: [
-					'src/CacheRequest.comp.js'
-				],
-				dest: 'dist/cacherequest.js'
-			}
-		},
 		copy: {
 			totest: {
 				files: [
@@ -49,7 +41,7 @@ module.exports = function(grunt) {
 		},
 		'uglify': {
 			options: {
-				mangle: false
+				screwIE8: true
 			},
 			my_target: {
 				files: {
@@ -59,7 +51,6 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-insert');
 	grunt.loadNpmTasks('grunt-rename');
@@ -67,7 +58,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-	// Default task(s).
-	grunt.registerTask('default', ['jshint','copy:beforeInsert','insert','rename:toComp','rename:fromTemp','concat','uglify','copy:totest', 'remove']);
 
+	grunt.registerTask('injection', ['copy:beforeInsert','insert','rename:toComp','rename:fromTemp']);
+	grunt.registerTask('default', ['jshint','injection','uglify','copy:totest', 'remove']);
 };
