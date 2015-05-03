@@ -1,6 +1,6 @@
 {
   "name": "CacheRequest",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Cache your requests on LocalStorage",
   "homepage": "https://github.com/renie/thorJS-builder",
   "repository": {
