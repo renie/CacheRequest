@@ -21,7 +21,7 @@ Sorry about this =(
 ## How to use?
 Just include **cacherequest.min.js** in your html and everything is ready!
 
-So you just have to call **CachedRequestHelper.send()** passing a json as parameter.
+So you just have to call **CacheRequest.send()** passing a json as parameter.
 
 This json is the same you already pass to jQuery, but you can pass two more options:
 
