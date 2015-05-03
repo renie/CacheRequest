@@ -1,6 +1,7 @@
 var CacheRequest = (function(){
 
-	// insert: CacheRequestProto.js
+	// insert AsyncReq
+	// insert CacheRequestProto
 
 	return {
 		send : function(options) {

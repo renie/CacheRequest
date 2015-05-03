@@ -12,6 +12,10 @@ module.exports = function(grunt) {
 			beforeInsert: {
 				src: 'src/CacheRequest.js',
 				dest: 'src/CacheRequest.temp.js'
+			},
+			toDist: {
+				src: 'src/CacheRequest.comp.js',
+				dest: 'dist/cacherequest.js'
 			}
 		},
 		rename: {
@@ -30,10 +34,15 @@ module.exports = function(grunt) {
 			}
 		},
 		insert: {
-			main: {
+			async: {
+				src: "src/AsyncReq.js",
+				dest: "src/CacheRequest.js",
+				match: "// insert AsyncReq"
+			},
+			proto: {
 				src: "src/CacheRequestProto.js",
 				dest: "src/CacheRequest.js",
-				match: "// insert: CacheRequestProto.js"
+				match: "// insert CacheRequestProto"
 			}
 		},
 		'jshint': {
@@ -59,6 +68,6 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 
-	grunt.registerTask('injection', ['copy:beforeInsert','insert','rename:toComp','rename:fromTemp']);
+	grunt.registerTask('injection', ['copy:beforeInsert','insert:async','insert:proto','rename:toComp','rename:fromTemp','copy:toDist']);
 	grunt.registerTask('default', ['jshint','injection','uglify','copy:totest', 'remove']);
 };
