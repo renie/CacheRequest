@@ -6,7 +6,7 @@ var CachedRequestHelper  = {
 		lastcall	: 'LASTCALL',
 		response	: 'RESPONSE'
 	},
- 
+
 
  	// Default 'valid date' for cached information
 	defaultTimeout	: 300000, // 5 minutes
@@ -17,7 +17,7 @@ var CachedRequestHelper  = {
 	*/
 	send : function(options) {
 		this.__prepareVariables(options);
- 
+
 		// If is there any cache and its timeout is valid, return cached information
 		// else proceed with normal request
 		var valid	= this.__isValid();
@@ -25,7 +25,7 @@ var CachedRequestHelper  = {
 			this.__callCachedCallback();
 		else
 			this.__doRequest();
- 
+
 		this.d.promise();
 	},
 
@@ -66,10 +66,10 @@ var CachedRequestHelper  = {
 	__isValid : function() {
 		if (!this.stored)
 			return false;
- 
+
 		var to		= this.stored[this.storageKeys.timeout],
 			lc		= this.stored[this.storageKeys.lastcall];
- 
+
 		return (Date.now() - lc) < to;
 	},
 
@@ -83,7 +83,7 @@ var CachedRequestHelper  = {
 			this.opt.success.call(this.opt.context, null, 'CACHED', this.stored[this.storageKeys.response]);
 		else if (this.opt.hasOwnProperty('complete'))
 			this.opt.complete(this.opt.context, 'CACHED', this.stored[this.storageKeys.response]);
- 
+
 		this.d.resolve();
 	},
 
@@ -98,12 +98,12 @@ var CachedRequestHelper  = {
 			'c'		: this.opt.complete,
 			'ctx'	: this.opt.context
 		};
- 
+
 		this.opt.success	= this.__successCallback;
 		this.opt.error		= this.__errorCallback;
 		this.opt.complete	= this.__completeCallback;
 		this.opt.context	= this;
- 
+
 		$.ajax(this.opt);
 	},
 
@@ -114,12 +114,12 @@ var CachedRequestHelper  = {
 	*/
 	__successCallback : function(data, status, res) {
 		this.__cacheRequest(res);
- 
+
 		if (this.originalSettings.s)
 			this.originalSettings.s.call(this.originalSettings.ctx, data, status, res);
 		else if (this.originalSettings.c)
 			this.originalSettings.c.call(this.originalSettings.ctx, res, status);
- 
+
 		this.d.resolve();
 	},
 
@@ -131,7 +131,7 @@ var CachedRequestHelper  = {
 
 		if (this.originalSettings.e)
 			this.originalSettings.call(this.originalSettings.ctx, res, status, err);
- 
+
 		this.d.resolve();
 	},
 
@@ -141,32 +141,32 @@ var CachedRequestHelper  = {
 		and resolves promise
 	*/
 	__completeCallback : function(res, status) {
- 
-		if(res.status === 0 && status === 'error') {
+
+		if(res.status === 0 || status === 'error') {
 			if (this.opt.useOldIfError && this.stored)
 				res = this.stored[this.storageKeys.response];
 			else
 				res = null;
 		}
- 
+
 		if (this.originalSettings.c)
 			this.originalSettings.c.call(this.originalSettings.ctx, res, status);
 		else
-			console.error('No "complete" callback, no connection and no cache available (or you don\'t want it).');
- 
+			console.log('No "complete" callback, no connection and no cache available (or you don\'t want it).');
+
 		this.d.resolve();
 	},
 
 
 	/*
-		Caches request's response with its timeout and last call time. 
+		Caches request's response with its timeout and last call time.
 	*/
 	__cacheRequest : function(res) {
 		var data = {};
 		data[this.storageKeys.timeout]	= this.opt.cacheTimeout || this.defaultTimeout;
 		data[this.storageKeys.lastcall] = Date.now();
 		data[this.storageKeys.response] = res;
- 
+
 		localStorage.setItem(this.hash, JSON.stringify(data));
 	}
 };

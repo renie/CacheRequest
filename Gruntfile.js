@@ -11,6 +11,13 @@ module.exports = function(grunt) {
 				dest: 'dist/cacherequest.js'
 			}
 		},
+		copy: {
+			main: {
+				files: [
+					{expand: true, src: ['dist/*'], dest: 'test/', filter: 'isFile'},
+				],
+			},
+		},
 		'jshint': {
 			all: ['Gruntfile.js', 'src/**/*.js']
 		},
@@ -27,10 +34,11 @@ module.exports = function(grunt) {
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 
 	// Default task(s).
-	grunt.registerTask('default', ['jshint','concat','uglify']);
+	grunt.registerTask('default', ['jshint','concat','uglify','copy']);
 
 };
