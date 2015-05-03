@@ -1,7 +1,7 @@
 {
   "name": "CacheRequest",
   "description": "Cache your requests on LocalStorage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main":"dist/cacherequest.min.js",
   "homepage": "https://github.com/renie/CacheRequest",
   "license": "MPL-2.0",
@@ -18,5 +18,19 @@
     "test",
     "tests",
     "src"
+  ],
+  "keywords": [
+    "javascript",
+    "cache",
+    "ajax",
+    "request",
+    "requests",
+    "localstorage",
+    "storage,"
+    "async",
+    "raw",
+    "lightweight",
+    "performance",
+    "minimalist"
   ]
 }
