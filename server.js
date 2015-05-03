@@ -4,8 +4,8 @@ var app = express();
 app.use(express.static('test'));
 
 app.get('/ok', function (req, res) {
-	//res.send('{response:"foo"}');
-	res.status(500).send('{response:"oops"}');
+	res.send('{response:"foo"}');
+	//res.status(500).send('{response:"oops"}');
 });
 
 

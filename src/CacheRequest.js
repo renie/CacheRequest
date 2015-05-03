@@ -1,5 +1,7 @@
 var CacheRequest = (function(){
 
+	var hasjQuery  = window.hasOwnProperty('jQuery');
+
 	// insert AsyncReq
 	// insert CacheRequestProto
 

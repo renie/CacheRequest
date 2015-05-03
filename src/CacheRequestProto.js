@@ -25,8 +25,6 @@ var CacheRequestProto = function CacheRequestProto(){
 			__callCachedCallback();
 		else
 			__doRequest();
-
-		self.d.promise();
 	}
 
 
@@ -37,7 +35,6 @@ var CacheRequestProto = function CacheRequestProto(){
 	*/
 	function __prepareVariables(options) {
 		self.opt	= options;
-		self.d		= new $.Deferred();
 		__createHash();
 		__getStored();
 	}
@@ -82,9 +79,7 @@ var CacheRequestProto = function CacheRequestProto(){
 		if (self.opt.hasOwnProperty('success'))
 			self.opt.success.call(self.opt.context, null, 'CACHED', self.stored[self.storageKeys.response]);
 		else if (self.opt.hasOwnProperty('complete'))
-			self.opt.complete(self.opt.context, 'CACHED', self.stored[self.storageKeys.response]);
-
-		self.d.resolve();
+			self.opt.complete.call(self.opt.context, self.stored[self.storageKeys.response], 'CACHED');
 	}
 
 
@@ -117,10 +112,6 @@ var CacheRequestProto = function CacheRequestProto(){
 
 		if (self.originalSettings.s)
 			self.originalSettings.s.call(self.originalSettings.ctx, data, status, res);
-		else if (self.originalSettings.c)
-			self.originalSettings.c.call(self.originalSettings.ctx, res, status);
-
-		self.d.resolve();
 	}
 
 
@@ -128,11 +119,8 @@ var CacheRequestProto = function CacheRequestProto(){
 		On error, calls original callbacks and resolves promise
 	*/
 	function __errorCallback(res, status, err) {
-
 		if (self.originalSettings.e)
 			self.originalSettings.call(self.originalSettings.ctx, res, status, err);
-
-		self.d.resolve();
 	}
 
 
@@ -141,7 +129,6 @@ var CacheRequestProto = function CacheRequestProto(){
 		and resolves promise
 	*/
 	function __completeCallback(res, status) {
-
 		if(res.status === 0 || status === 'error') {
 			if (self.opt.useOldIfError && self.stored)
 				res = self.stored[self.storageKeys.response];
@@ -153,8 +140,6 @@ var CacheRequestProto = function CacheRequestProto(){
 			self.originalSettings.c.call(self.originalSettings.ctx, res, status);
 		else
 			console.log('No "complete" callback, no connection and no cache available (or you don\'t want it).');
-
-		self.d.resolve();
 	}
 
 

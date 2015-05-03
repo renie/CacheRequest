@@ -9,13 +9,15 @@ It's just a class for caching responses from ajax. This does **NOT** allow a ful
 
 
 ## Requiremets
-For now, it's depends on jQuery for doing requests and make promises possible.
-
-About requests, it will be improved soon. But for promises some browser needs external libs.
-
-[Promises support](http://caniuse.com/#search=promise)
+For now, it's depends on jQuery for doing requests. It will be improved soon.
 
 Sorry about this =(
+
+
+**[update 3/5/15]**
+It's already possible to use this cache without jQuery. **However, it's not recommended**. It was not well tested yet.
+
+If want use this without jQuery even knowing this is not ready. It's is simple, if jquery is not present, automatically it will use its own implementation of XMLHTTPRequest.
 
 
 ## Install
