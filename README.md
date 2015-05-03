@@ -18,7 +18,7 @@ Sorry about this =(
 
 It's already possible to use this cache without jQuery. **However, it's not recommended**. It was not well tested yet.
 
-If want use this without jQuery even knowing this is not ready. It's is simple, if jquery is not present, automatically it will use its own implementation of XMLHTTPRequest.
+If want use this without jQuery even knowing this is not ready. It's simple, if jQuery is not present, automatically it will use its own implementation of XMLHTTPRequest.
 
 
 ## Install
