@@ -1,172 +1,186 @@
-var CachedRequestHelper  = {
+var CacheRequest = (function(){
 
-	// Just to make easier to chance this string if needed
-	storageKeys : {
-		timeout		: 'TIMEOUT',
-		lastcall	: 'LASTCALL',
-		response	: 'RESPONSE'
-	},
+	var CacheRequestProto = function CacheRequestProto(){
 
+		// Just to make easier to chance this string if needed
+		var self = this;
 
- 	// Default 'valid date' for cached information
-	defaultTimeout	: 300000, // 5 minutes
-
-
-	/*
-		Method for being called outside (options are the same as jquery ones)
-	*/
-	send : function(options) {
-		this.__prepareVariables(options);
-
-		// If is there any cache and its timeout is valid, return cached information
-		// else proceed with normal request
-		var valid	= this.__isValid();
-		if (valid)
-			this.__callCachedCallback();
-		else
-			this.__doRequest();
-
-		this.d.promise();
-	},
-
-
-	/*
-		Stores options in object attribute to avoid unnecessary parameter
-		create promise, mount an unique hash for that request
-		get an old cache, if exists
-	*/
-	__prepareVariables : function(options) {
-		this.opt	= options;
-		this.d		= new $.Deferred();
-		this.__createHash();
-		this.__getStored();
-	},
-
-
-	/*
-		Hash is created this way: url + request data + request method
-	*/
-	__createHash : function() {
-		this.hash	= this.opt.url + '' + (this.opt.data || '') + (this.opt.method || '-ANY');
-	},
-
-
-	/*
-		Tries to get cache from local storage using its hash
-	*/
-	__getStored : function() {
-		this.stored = localStorage.getItem(this.hash);
-		this.stored = JSON.parse(this.stored) || null;
-	},
-
-
-	/*
-		Checkes cache's validity based on its timeout and time that was last called
-	*/
-	__isValid : function() {
-		if (!this.stored)
-			return false;
-
-		var to		= this.stored[this.storageKeys.timeout],
-			lc		= this.stored[this.storageKeys.lastcall];
-
-		return (Date.now() - lc) < to;
-	},
-
-
-	/*
-		Calls user's callback (success and complete), with cached information and
-		keeping context chosen
-	*/
-	__callCachedCallback : function() {
-		if (this.opt.hasOwnProperty('success'))
-			this.opt.success.call(this.opt.context, null, 'CACHED', this.stored[this.storageKeys.response]);
-		else if (this.opt.hasOwnProperty('complete'))
-			this.opt.complete(this.opt.context, 'CACHED', this.stored[this.storageKeys.response]);
-
-		this.d.resolve();
-	},
-
-
-	/*
-		Does AJAX requests, changing callback parameters (original will be called later)
-	*/
-	__doRequest: function() {
-		this.originalSettings = {
-			's'		: this.opt.success,
-			'f'		: this.opt.error,
-			'c'		: this.opt.complete,
-			'ctx'	: this.opt.context
+		self.storageKeys = {
+			timeout		: 'TIMEOUT',
+			lastcall	: 'LASTCALL',
+			response	: 'RESPONSE'
 		};
 
-		this.opt.success	= this.__successCallback;
-		this.opt.error		= this.__errorCallback;
-		this.opt.complete	= this.__completeCallback;
-		this.opt.context	= this;
+	 	// Default 'valid date' for cached information
+		self.defaultTimeout	= 300000; // 5 minutes
 
-		$.ajax(this.opt);
-	},
+		/*
+			Method for being called outside (options are the same as jquery ones)
+		*/
+		function send(options) {
+			__prepareVariables(options);
 
-
-	/*
-		On success, it caches this request on LocalStorage, calls original callbacks
-		and resolves promise
-	*/
-	__successCallback : function(data, status, res) {
-		this.__cacheRequest(res);
-
-		if (this.originalSettings.s)
-			this.originalSettings.s.call(this.originalSettings.ctx, data, status, res);
-		else if (this.originalSettings.c)
-			this.originalSettings.c.call(this.originalSettings.ctx, res, status);
-
-		this.d.resolve();
-	},
-
-
-	/*
-		On error, calls original callbacks and resolves promise
-	*/
-	__errorCallback : function(res, status, err) {
-
-		if (this.originalSettings.e)
-			this.originalSettings.call(this.originalSettings.ctx, res, status, err);
-
-		this.d.resolve();
-	},
-
-
-	/*
-		On complete, it checkes if old cached request can be returned, calls original callbacks
-		and resolves promise
-	*/
-	__completeCallback : function(res, status) {
-
-		if(res.status === 0 || status === 'error') {
-			if (this.opt.useOldIfError && this.stored)
-				res = this.stored[this.storageKeys.response];
+			// If is there any cache and its timeout is valid, return cached information
+			// else proceed with normal request
+			var valid	= __isValid();
+			if (valid)
+				__callCachedCallback();
 			else
-				res = null;
+				__doRequest();
+
+			self.d.promise();
 		}
 
-		if (this.originalSettings.c)
-			this.originalSettings.c.call(this.originalSettings.ctx, res, status);
-		else
-			console.log('No "complete" callback, no connection and no cache available (or you don\'t want it).');
 
-		this.d.resolve();
-	},
+		/*
+			Stores options in object attribute to avoid unnecessary parameter
+			create promise, mount an unique hash for that request
+			get an old cache, if exists
+		*/
+		function __prepareVariables(options) {
+			self.opt	= options;
+			self.d		= new $.Deferred();
+			__createHash();
+			__getStored();
+		}
 
 
-	/*
-		Caches request's response with its timeout and last call time.
-	*/
-	__cacheRequest : function(res) {
-		var data = {};
-		data[this.storageKeys.timeout]	= this.opt.cacheTimeout || this.defaultTimeout;
-		data[this.storageKeys.lastcall] = Date.now();
-		data[this.storageKeys.response] = res;
+		/*
+			Hash is created this way: url + request data + request method
+		*/
+		function __createHash() {
+			self.hash	= self.opt.url + '' + (self.opt.data || '') + (self.opt.method || '-ANY');
+		}
 
-		localStorage.setItem(this.hash, JSON.stringify(data));
-	}
-};
+
+		/*
+			Tries to get cache from local storage using its hash
+		*/
+		function __getStored() {
+			self.stored = localStorage.getItem(self.hash);
+			self.stored = JSON.parse(self.stored) || null;
+		}
+
+
+		/*
+			Checkes cache's validity based on its timeout and time that was last called
+		*/
+		function __isValid() {
+			if (!self.stored)
+				return false;
+
+			var to		= self.stored[self.storageKeys.timeout],
+				lc		= self.stored[self.storageKeys.lastcall];
+
+			return (Date.now() - lc) < to;
+		}
+
+
+		/*
+			Calls user's callback (success and complete), with cached information and
+			keeping context chosen
+		*/
+		function __callCachedCallback() {
+			if (self.opt.hasOwnProperty('success'))
+				self.opt.success.call(self.opt.context, null, 'CACHED', self.stored[self.storageKeys.response]);
+			else if (self.opt.hasOwnProperty('complete'))
+				self.opt.complete(self.opt.context, 'CACHED', self.stored[self.storageKeys.response]);
+
+			self.d.resolve();
+		}
+
+
+		/*
+			Does AJAX requests, changing callback parameters (original will be called later)
+		*/
+		function __doRequest() {
+			self.originalSettings = {
+				's'		: self.opt.success,
+				'f'		: self.opt.error,
+				'c'		: self.opt.complete,
+				'ctx'	: self.opt.context
+			};
+
+			self.opt.success	= __successCallback;
+			self.opt.error		= __errorCallback;
+			self.opt.complete	= __completeCallback;
+			self.opt.context	= self;
+
+			$.ajax(self.opt);
+		}
+
+
+		/*
+			On success, it caches this request on LocalStorage, calls original callbacks
+			and resolves promise
+		*/
+		function __successCallback(data, status, res) {
+			__cacheRequest(res);
+
+			if (self.originalSettings.s)
+				self.originalSettings.s.call(self.originalSettings.ctx, data, status, res);
+			else if (self.originalSettings.c)
+				self.originalSettings.c.call(self.originalSettings.ctx, res, status);
+
+			self.d.resolve();
+		}
+
+
+		/*
+			On error, calls original callbacks and resolves promise
+		*/
+		function __errorCallback(res, status, err) {
+
+			if (self.originalSettings.e)
+				self.originalSettings.call(self.originalSettings.ctx, res, status, err);
+
+			self.d.resolve();
+		}
+
+
+		/*
+			On complete, it checkes if old cached request can be returned, calls original callbacks
+			and resolves promise
+		*/
+		function __completeCallback(res, status) {
+
+			if(res.status === 0 || status === 'error') {
+				if (self.opt.useOldIfError && self.stored)
+					res = self.stored[self.storageKeys.response];
+				else
+					res = null;
+			}
+
+			if (self.originalSettings.c)
+				self.originalSettings.c.call(self.originalSettings.ctx, res, status);
+			else
+				console.log('No "complete" callback, no connection and no cache available (or you don\'t want it).');
+
+			self.d.resolve();
+		}
+
+
+		/*
+			Caches request's response with its timeout and last call time.
+		*/
+		function __cacheRequest(res) {
+			var data = {};
+			data[self.storageKeys.timeout]	= self.opt.cacheTimeout || self.defaultTimeout;
+			data[self.storageKeys.lastcall] = Date.now();
+			data[self.storageKeys.response] = res;
+
+			localStorage.setItem(self.hash, JSON.stringify(data));
+		}
+
+		return {
+			send : send
+		};
+	};
+
+	return {
+		send : function(options) {
+			var cr = new CacheRequestProto();
+			return cr.send(options);
+		}
+	};
+}());

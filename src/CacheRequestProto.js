@@ -1,6 +1,4 @@
-var CacheRequest = (function(){
-
-	var CacheRequestProto = function CacheRequestProto(){
+var CacheRequestProto = function CacheRequestProto(){
 
 		// Just to make easier to chance this string if needed
 		var self = this;
@@ -176,11 +174,3 @@ var CacheRequest = (function(){
 			send : send
 		};
 	};
-
-	return {
-		send : function(options) {
-			var cr = new CacheRequestProto();
-			return cr.send(options);
-		}
-	};
-}());

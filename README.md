@@ -36,6 +36,6 @@ For now, manually. You can run **node server.js** and access **localhost:3000**.
 It will open a page with lib imported on dev mode and jquery.
 So you can change on **server.js** the server's response, execute things like this below on console and check your network tab and localhost:
 
-- CachedRequestHelper.send({url:'/ok', complete:function(){debugger}})
-- CachedRequestHelper.send({url:'/ok', complete:function(){debugger}, useOldIfError:true})
-- CachedRequestHelper.send({url:'/ok', complete:function(){debugger}, cacheTimeout:800000})
+- CacheRequest.send({url:'/ok', complete:function(){debugger}})
+- CacheRequest.send({url:'/ok', complete:function(){debugger}, useOldIfError:true})
+- CacheRequest.send({url:'/ok', complete:function(){debugger}, cacheTimeout:800000})
