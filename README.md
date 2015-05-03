@@ -18,6 +18,10 @@ About requests, it will be improved soon. But for promises some browser needs ex
 Sorry about this =(
 
 
+## Install
+*bower install cache-requests*
+
+
 ## How to use?
 Just include **cacherequest.min.js** in your html and everything is ready!
 
